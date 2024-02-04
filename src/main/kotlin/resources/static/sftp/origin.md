@@ -1,0 +1,1 @@
+이 파일은 application 실행 시 input 폴더로 이동 합니다.
