@@ -1,4 +1,4 @@
-package com.example.sftpeventlistener
+package com.example.sftpeventlistener.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
