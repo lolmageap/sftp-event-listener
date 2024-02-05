@@ -1,7 +1,6 @@
 package com.example.sftpeventlistener.service
 
 import com.example.sftpeventlistener.path.FilePath.ERROR_FILE_DIRECTORY
-import com.example.sftpeventlistener.path.FilePath.LOCAL_FILE_DIRECTORY
 import com.example.sftpeventlistener.path.FilePath.SETTLEMENT_SUCCESS_FILE_DIRECTORY
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -16,19 +15,6 @@ import java.io.File
 private val logger = KotlinLogging.logger {}
 @Service
 class FileService {
-
-    fun copyToLocal(originFile: File) {
-        val localPath = File("$LOCAL_FILE_DIRECTORY/${originFile.name}")
-
-        try {
-            originFile.copyTo(
-                target = localPath,
-                overwrite = false,
-            )
-        } catch (e: FileAlreadyExistsException) {
-            logger.error { "File already exists: ${originFile.name}" }
-        }
-    }
 
     fun copyToSettlementSuccess(localFile: File) {
         val settlementSuccessPath = File("$SETTLEMENT_SUCCESS_FILE_DIRECTORY/${localFile.name}")
@@ -53,14 +39,6 @@ class FileService {
             )
         } catch (e: Exception) {
             logger.error { "파일 복사 실패: ${e.message}" }
-        }
-    }
-
-    fun deleteOriginFile(originFile: File) {
-        val localPath = File("$LOCAL_FILE_DIRECTORY/${originFile.name}")
-
-        if (localPath.exists()) {
-            originFile.delete()
         }
     }
 
