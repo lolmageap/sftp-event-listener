@@ -1,14 +1,16 @@
 package com.example.sftpeventlistener.listener
 
-import com.example.sftpeventlistener.service.FileService
+import com.example.sftpeventlistener.path.FilePath.LOCAL_FILE_DIRECTORY
 import com.example.sftpeventlistener.path.FilePath.ORIGIN_FILE_DIRECTORY
+import com.example.sftpeventlistener.service.FileService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.integration.channel.DirectChannel
 import org.springframework.integration.config.EnableIntegration
 import org.springframework.integration.dsl.IntegrationFlow
 import org.springframework.integration.dsl.Pollers
-import org.springframework.integration.file.dsl.Files
+import org.springframework.integration.sftp.dsl.Sftp
+import org.springframework.integration.sftp.session.DefaultSftpSessionFactory
 import org.springframework.messaging.MessageChannel
 import java.io.File
 
@@ -20,9 +22,8 @@ import java.io.File
 @Configuration
 @EnableIntegration
 class OriginFileEventListener(
-    private val fileService: FileService,
+    private val sessionFactory: DefaultSftpSessionFactory,
 ) {
-
     @Bean
     fun fileInputChannel(): MessageChannel {
         return DirectChannel()
@@ -31,9 +32,10 @@ class OriginFileEventListener(
     @Bean
     fun fileReadingFlow(): IntegrationFlow {
         return IntegrationFlow.from(
-            Files.inboundAdapter(
-                File(ORIGIN_FILE_DIRECTORY)
-            )
+            Sftp.inboundAdapter(sessionFactory)
+                .remoteDirectory(ORIGIN_FILE_DIRECTORY)
+                .localDirectory(File(LOCAL_FILE_DIRECTORY))
+                .deleteRemoteFiles(true)
         ) { p ->
             p.poller(
                 Pollers.fixedDelay(1000)
@@ -41,9 +43,9 @@ class OriginFileEventListener(
         }.channel(
             fileInputChannel()
         ).handle<File> { file, _ ->
-            fileService.copyToLocal(file)
-            fileService.deleteOriginFile(file)
-        }.get()
+            println("file = $file")
+        }
+        .get()
     }
 
 }
