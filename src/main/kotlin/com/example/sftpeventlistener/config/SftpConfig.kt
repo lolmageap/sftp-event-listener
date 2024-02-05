@@ -16,12 +16,9 @@ class SftpConfig {
     fun sftpSessionFactory(): DefaultSftpSessionFactory =
         DefaultSftpSessionFactory(true).apply {
             setHost("localhost")
-            setPort(22)
+            setPort(2222)
             setUser("user")
             setPassword("password")
-            setPrivateKey(
-                ClassPathResource("keys/test_key.pem")
-            )
-            setPrivateKeyPassphrase("cherhy")
+            setAllowUnknownKeys(true)
         }
 }
