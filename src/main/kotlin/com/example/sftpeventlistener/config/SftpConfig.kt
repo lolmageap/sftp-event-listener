@@ -8,7 +8,6 @@ import org.springframework.integration.sftp.session.DefaultSftpSessionFactory
 /**
  *  보안이 있는 SFTP 연결 설정을 할 때 사용 하는 클래스
  */
-
 @Configuration
 class SftpConfig {
 
@@ -29,7 +28,6 @@ class SftpConfig {
      * setPoolSize 는 세션을 최대 몇개 생성 할지 설정 하는 옵션
      * setTestSession 은 세션이 유효 한지 확인 하는 옵션 - 테스트 용으로 있는줄 알았음...
      */
-
     @Bean
     fun sftpSessionFactory() =
         CachingSessionFactory(
