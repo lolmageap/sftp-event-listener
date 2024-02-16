@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets
 
 private val logger = KotlinLogging.logger {}
 
-// 파일을 읽어서 정산 처리를 하는 로직을 구현 해야함
 @Component
 class SettlementCalculator {
 
