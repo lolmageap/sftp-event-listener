@@ -7,3 +7,6 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+
+# DBMS 에서 RSA 키를 사용 하지 않고 비밀 번호를 사용 하도록 설정
+# MySQL 8 : allowPublicKeyRetrieval=false
