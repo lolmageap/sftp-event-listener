@@ -19,7 +19,7 @@
     [SFTP Server 설정](src%2Fmain%2Fkotlin%2Fcom%2Fexample%2Fsftpeventlistener%2Fconfig%2FSftpConfig.kt)
 
 3. #### sftp server 가 없다면 docker 를 이용 하여 sftp server 를 실행 시킨다.
-    - ex) docker run -p 2222:22 -d atmoz/sftp:alpine user:password:::upload
+    - ex) docker run -p 2222:22 -d atmoz/sftp:alpine user:password:::pull,push
 
 4. #### 그렇지 않고 로컬 에서 실행 시킬 거면 기본 설정 으로 application 을 실행 한다.
 
