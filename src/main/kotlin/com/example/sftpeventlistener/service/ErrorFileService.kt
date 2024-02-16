@@ -8,7 +8,7 @@ import java.io.*
 private val logger = KotlinLogging.logger {}
 
 @Service
-class FileService {
+class ErrorFileService {
 
     fun copyToError(localFile: File) {
         val errorFile = File("$ERROR_FILE_DIRECTORY/${localFile.name}")
