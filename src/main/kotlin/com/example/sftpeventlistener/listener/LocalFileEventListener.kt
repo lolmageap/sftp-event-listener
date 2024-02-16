@@ -14,6 +14,7 @@ import java.io.File
 
 /**
  * sftp 에서 local 로 복사 해온 파일을 처리 하는 설정 클래스
+ *
  * local 경로로 파일이 생성 되면 파일을 읽어서 처리 한다.
  */
 @Configuration

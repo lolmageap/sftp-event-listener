@@ -20,8 +20,9 @@ import org.springframework.messaging.MessageChannel
 import java.io.File
 
 /**
- *  <h3> sftp 에서 local 로 복사 해오는 클래스 </h3>
- *  <p> ex) 설정해 놓은 경로에 파일이 생성 되면 파일을 읽어서 처리 하는 설정 </p>
+ *  sftp 에서 local 로 복사 해오는 클래스
+ *
+ *  ex) 설정해 놓은 경로에 파일이 생성 되면 파일을 읽어서 처리 하는 설정
  */
 
 @Configuration
@@ -36,9 +37,11 @@ class OriginFileEventListener(
     }
 
     /**
-     *  <p> metadataStore 는 파일을 읽었 는지 안읽었 는지 확인 하기 위한 저장소 </p>
-     *  <p> localFilter 에서 읽은 데이터 는 중복 처리 하지 않기 위한 설정 </p>
-     *  <p> ( 서버가 다운 되었 다가 다시 올라 오면 중복 처리 되는 것을 방지 하기 위한 설정) </p>
+     *  metadataStore 는 파일을 읽었 는지 안읽었 는지 확인 하기 위한 저장소
+     *
+     *  localFilter 에서 읽은 데이터 는 중복 처리 하지 않기 위한 설정
+     *
+     *  ( 서버가 다운 되었 다가 다시 올라 오면 중복 처리 되는 것을 방지 하기 위한 설정)
      */
     @Bean
     fun metadataStore(): ConcurrentMetadataStore =
@@ -48,11 +51,15 @@ class OriginFileEventListener(
         }
 
     /**
-     * <p> sftp 서버에서 파일을 읽어서 local 로 복사 하는 설정 </p>
-     * <p> poller 를 사용 하여 주기적으로 파일을 읽어서 처리 하도록 설정 </p>
-     * <p> fileInputChannel 에서 파일을 읽어서 처리 하도록 설정 </p>
-     * <p> handle 에서 파일을 읽어서 처리 하는 로직을 구현 </p>
-     * <p> 파일을 읽어서 처리 하는 로직은 settlementUseCase 에서 구현 </p>
+     * sftp 서버에서 파일을 읽어서 local 로 복사 하는 설정
+     *
+     * poller 를 사용 하여 주기적으로 파일을 읽어서 처리 하도록 설정
+     *
+     * fileInputChannel 에서 파일을 읽어서 처리 하도록 설정
+     *
+     * handle 에서 파일을 읽어서 처리 하는 로직을 구현
+     *
+     * 파일을 읽어서 처리 하는 로직은 settlementUseCase 에서 구현
      */
     @Bean
     fun fileReadingFlow(): IntegrationFlow {
