@@ -2,7 +2,7 @@ package com.example.sftpeventlistener.listener
 
 import com.example.sftpeventlistener.path.FilePath.LOCAL_FILE_DIRECTORY
 import com.example.sftpeventlistener.path.FilePath.LOCAL_FILE_META_DATA_STORE
-import com.example.sftpeventlistener.path.FilePath.ORIGIN_FILE_DIRECTORY
+import com.example.sftpeventlistener.path.FilePath.ORIGIN_PULL_FILE_DIRECTORY
 import com.example.sftpeventlistener.usecase.SettlementUseCase
 import org.apache.sshd.sftp.client.SftpClient
 import org.springframework.context.annotation.Bean
@@ -27,7 +27,7 @@ import java.io.File
 
 @Configuration
 @EnableIntegration
-class OriginFileEventListener(
+class FileEventListener(
     private val sessionFactory: CachingSessionFactory<SftpClient.DirEntry>,
     private val settlementUseCase: SettlementUseCase,
 ) {
@@ -65,7 +65,7 @@ class OriginFileEventListener(
     fun fileReadingFlow(): IntegrationFlow {
         return IntegrationFlow.from(
             Sftp.inboundAdapter(sessionFactory)
-                .remoteDirectory(ORIGIN_FILE_DIRECTORY)
+                .remoteDirectory(ORIGIN_PULL_FILE_DIRECTORY)
                 .localDirectory(File(LOCAL_FILE_DIRECTORY))
                 .deleteRemoteFiles(false)
                 .localFilter(
