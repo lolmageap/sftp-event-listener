@@ -1,27 +1,47 @@
-# Sftp Event Listener
+## Local Database Setting
+- H2
+h2 database 를 사용 할 때는 별도의 설정을 하지 않는다.
 
-- Workflow {
+- Mysql
+Docker 를 사용 하여 Mysql 을 구동 하고 yml 파일을 설정 한다.
 
-    1. sftp server 에 파일이 생성 되면, 해당 파일을 input 이라는 폴더에 저장 합니다.
-    2. 저장이 성공 했다면 sftp server 에 저장된 파일을 삭제 합니다.
-    3. input 폴더에 저장된 파일을 읽어서 파일의 내용 으로 정산을 실행 시킵니다.
-    4. 만약에 정산 결과가 성공적 으로 생성 됐다면 settlement 폴더에 정산 결과 파일을 저장 합니다.
-    5. 정산 과정 중에 에러가 발생 하면 error 폴더에 에러 파일을 저장 합니다. - error log 도 같이 저장 합니다.
+```bash
+docker run -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=password -d mysql
+```
+※ Mysql 에 Connection 설정 할 때 매개 변수로 allowPublicKeyRetrieval=true 를 추가 해야 한다.
 
-    }
+## Sftp Workflow
 
-### 실행 단계
+1. sftp server receive 폴더에 파일이 적재 되면 자동 으로 파일을 **무조건** 읽어 오고 저장 한다.
+2. 읽어온 원본 파일은 poller 가 주기적 으로 호출 한다.
+3. metadataStore 에 poller 가 처리한 파일의 정보를 저장 하여 재처리 를 방지 한다.
+4. poller 에 의해 호출된 파일은 handler 에서 처리 된다.
 
-1.  #### sftp 에 접속 하기 위해 pem key 를 생성 해준다.
-    - ssh-keygen -t rsa -b 2048 -f ./src/main/resources/static/keys/test_key.pem;
+---
 
-2. #### sftp server 에 접속 하기 위한 정보를 설정 해준다.
-    [SFTP Server 설정](src%2Fmain%2Fkotlin%2Fcom%2Fexample%2Fsftpeventlistener%2Fconfig%2FSftpConfig.kt)
+## SFTP Local Test
+Local 에서 Docker 로 SFTP 서버를 구동 하여 테스트 를 진행 한다.
 
-3. #### sftp server 가 없다면 docker 를 이용 하여 sftp server 를 실행 시킨다.
-    - ex) docker run -p 2222:22 -d atmoz/sftp:alpine user:password:::pull,push
+SFTP 서버는 `atmoz/sftp` 를 사용 한다.
 
-4. #### 그렇지 않고 로컬 에서 실행 시킬 거면 기본 설정 으로 application 을 실행 한다.
+```bash
+docker run -p 2222:22 -d --name nicepay atmoz/sftp user:password:::receive,request
+docker run -p 2223:22 -d --name sectanine atmoz/sftp user:password:::receive,request
+```
 
-## 주의
-한번 처리한 파일과 파일 명이 동일 하면 event listener 가 동작 하지 않는다.
+### SFTP 서버 접속
+```bash
+sftp -P 2222 user@localhost
+sftp -P 2223 user@localhost
+```
+
+#### SFTP 서버 접속 정보
+- password: password
+
+### SFTP 서버에 수동 으로 파일 업로드 하는 방법
+
+sftp 서버에 접속한 뒤
+```bash
+cd receive
+put README.MD
+```
