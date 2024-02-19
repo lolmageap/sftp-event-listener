@@ -20,11 +20,12 @@ import org.springframework.messaging.MessageChannel
 import java.io.File
 
 /**
- *  sftp 에서 local 로 복사 해오는 클래스
- *
- *  ex) 설정해 놓은 경로에 파일이 생성 되면 파일을 읽어서 처리 하는 설정
+ * <h2> Sftp 에서 파일을 읽어 오는 이벤트 리스너 입니다.</h2>
+ * <h3> IntegrationFlows 설명 : </h3>
+ * <p> - from : 어디서 읽어올 지 </p>
+ * <p> - channel : 어디로 보낼지 </p>
+ * <p> - handle : 어떻게 처리할 지 </p>
  */
-
 @Configuration
 @EnableIntegration
 class FileEventListener(
@@ -37,11 +38,8 @@ class FileEventListener(
     }
 
     /**
-     *  metadataStore 는 파일을 읽었 는지 안읽었 는지 확인 하기 위한 저장소
-     *
-     *  localFilter 에서 읽은 데이터 는 중복 처리 하지 않기 위한 설정
-     *
-     *  ( 서버가 다운 되었 다가 다시 올라 오면 중복 처리 되는 것을 방지 하기 위한 설정)
+     *  <p>metadataStore 는 파일을 읽었 는지 안읽었 는지 확인 하기 위한 저장소</p>
+     *  <p>( 서버가 다운 되었 다가 다시 올라 오면 중복 처리 되는 것을 방지 하기 위한 설정)</p>
      */
     @Bean
     fun metadataStore(): ConcurrentMetadataStore =
@@ -51,15 +49,14 @@ class FileEventListener(
         }
 
     /**
-     * sftp 서버에서 파일을 읽어서 local 로 복사 하는 설정
-     *
-     * poller 를 사용 하여 주기적으로 파일을 읽어서 처리 하도록 설정
-     *
-     * fileInputChannel 에서 파일을 읽어서 처리 하도록 설정
-     *
-     * handle 에서 파일을 읽어서 처리 하는 로직을 구현
-     *
-     * 파일을 읽어서 처리 하는 로직은 settlementUseCase 에서 구현
+     * <h2> Sftp inboundAdapter 는 Sftp 서버 에서 파일을 읽어 오는 역할을 합니다.</h2>
+     * <p> - remoteDirectory : Sftp 서버의 어느 directory 에서 읽어올 지 </p>
+     * <p> - localDirectory : 읽어온 파일을 어디에 저장할 지 </p>
+     * <p> - deleteRemoteFiles : 읽어온 파일을 Sftp 서버 에서 삭제할 지 </p>
+     * <p> - localFilter: sftp 에서 local 로 읽어온 파일을 poller 의 필터 대상 으로 적용 </p>
+     * <p> - localFilter.prefix : 절대 변하면 안되는 구분자 값 (prefix 로 localFilter 의 대상을 파악함) </p>
+     * <p> - filter : Success 에 파일이 존재 하지 않으면 handle 을 실행 시키지 않습니다. (읽어 오기는 함) </p>
+     * <p> - poller : 얼마 마다 읽어올 지 (읽어 오면 handle 에서 파일을 처리 합니다.) </p>
      */
     @Bean
     fun fileReadingFlow(): IntegrationFlow {
