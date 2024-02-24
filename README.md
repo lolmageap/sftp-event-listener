@@ -25,8 +25,8 @@ Local 에서 Docker 로 SFTP 서버를 구동 하여 테스트 를 진행 한다
 SFTP 서버는 `atmoz/sftp` 를 사용 한다.
 
 ```bash
-docker run -p 2222:22 -d --name nicepay atmoz/sftp user:password:::receive,request
-docker run -p 2223:22 -d --name sectanine atmoz/sftp user:password:::receive,request
+docker run -p 2222:22 -d --name one atmoz/sftp user:password:::pull,push
+docker run -p 2223:22 -d --name two atmoz/sftp user:password:::pull,push
 ```
 
 ### SFTP 서버 접속
@@ -42,6 +42,6 @@ sftp -P 2223 user@localhost
 
 sftp 서버에 접속한 뒤
 ```bash
-cd receive
+cd pull
 put README.MD
 ```
