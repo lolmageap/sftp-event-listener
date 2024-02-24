@@ -25,6 +25,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.microutils:kotlin-logging:3.0.5")
     implementation("org.springframework.integration:spring-integration-sftp:6.2.1")
+    implementation("org.springframework.integration:spring-integration-jdbc:6.2.1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.h2database:h2")
 
