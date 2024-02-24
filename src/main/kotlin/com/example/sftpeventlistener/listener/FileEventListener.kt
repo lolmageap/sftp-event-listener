@@ -68,7 +68,7 @@ class FileEventListener(
                 .localFilter(
                     FileSystemPersistentAcceptOnceFileListFilter(
                         metadataStore(),
-                        "prefix",
+                        PREFIX,
                     )
                 )
         ) { p ->
@@ -83,4 +83,7 @@ class FileEventListener(
         .get()
     }
 
+    companion object {
+        const val PREFIX = "prefix-"
+    }
 }
