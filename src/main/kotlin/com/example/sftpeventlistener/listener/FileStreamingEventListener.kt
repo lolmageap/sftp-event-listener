@@ -1,7 +1,6 @@
 package com.example.sftpeventlistener.listener
 
 import com.example.sftpeventlistener.extension.inputStream
-import com.example.sftpeventlistener.path.FilePath.LOCAL_FILE_META_DATA_STORE
 import com.example.sftpeventlistener.path.FilePath.ORIGIN_PULL_FILE_DIRECTORY
 import org.apache.sshd.sftp.client.SftpClient
 import org.springframework.context.annotation.Bean
@@ -13,30 +12,30 @@ import org.springframework.integration.config.EnableIntegration
 import org.springframework.integration.core.MessageSource
 import org.springframework.integration.file.remote.session.CachingSessionFactory
 import org.springframework.integration.handler.advice.ExpressionEvaluatingRequestHandlerAdvice
-import org.springframework.integration.metadata.ConcurrentMetadataStore
-import org.springframework.integration.metadata.PropertiesPersistingMetadataStore
+import org.springframework.integration.jdbc.metadata.JdbcMetadataStore
 import org.springframework.integration.sftp.filters.SftpPersistentAcceptOnceFileListFilter
 import org.springframework.integration.sftp.inbound.SftpStreamingMessageSource
 import org.springframework.integration.sftp.session.SftpRemoteFileTemplate
 import org.springframework.integration.transformer.StreamTransformer
 import org.springframework.messaging.MessageHandler
 import java.io.InputStream
+import javax.sql.DataSource
+
 
 /**
  * Sftp 에서 파일을 읽어 Stream 으로 변환 하는 이벤트 리스너 입니다.
  * LocalDirectory 에 별도로 저장 하지 않고 Stream 으로 변환 하여 처리 합니다.
+ * JdbcMetadataStore 를 사용 하여 읽어온 파일에 대한 중복 처리를 방지 합니다. (읽어온 데이터 에 대한 정보는 DB 에 저장)
  */
 @Configuration
 @EnableIntegration
 class FileStreamingEventListener(
     private val sessionFactory: CachingSessionFactory<SftpClient.DirEntry>,
+    private val dataSource: DataSource,
 ) {
     @Bean
-    fun metadataStore(): ConcurrentMetadataStore =
-        PropertiesPersistingMetadataStore().apply {
-            setBaseDirectory(LOCAL_FILE_META_DATA_STORE)
-            afterPropertiesSet()
-        }
+    fun jdbcMetadataStore(dataSource: DataSource) =
+        JdbcMetadataStore(dataSource)
 
     @Bean
     @InboundChannelAdapter(channel = "stream")
@@ -45,8 +44,8 @@ class FileStreamingEventListener(
             setRemoteDirectory(ORIGIN_PULL_FILE_DIRECTORY)
             setFilter(
                 SftpPersistentAcceptOnceFileListFilter(
-                    metadataStore(),
-                    "prefix-"
+                    jdbcMetadataStore(dataSource),
+                    PREFIX
                 )
             )
             maxFetchSize = 1
@@ -86,4 +85,7 @@ class FileStreamingEventListener(
             setPropagateEvaluationFailures(true)
         }
 
+    companion object {
+        const val PREFIX = "stream-"
+    }
 }
