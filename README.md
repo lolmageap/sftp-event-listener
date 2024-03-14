@@ -45,3 +45,4 @@ sftp 서버에 접속한 뒤
 cd pull
 put README.MD
 ```
+README 파일이 업로드 된다.
