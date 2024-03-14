@@ -8,7 +8,7 @@ Docker 를 사용 하여 Mysql 을 구동 하고 yml 파일을 설정 한다.
 ```bash
 docker run -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=password -d mysql
 ```
-※ Mysql 에 Connection 설정 할 때 매개 변수로 allowPublicKeyRetrieval=true 를 추가 해야 한다.
+※ Mysql 에 Connection 설정 할 때 매개 변수로 allowPublicKeyRetrieval=true 를 추가 해야 한다. (Sftp 서버와의 호환성 문제)
 
 ## Sftp Workflow
 
